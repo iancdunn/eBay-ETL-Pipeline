@@ -1,4 +1,4 @@
-# eBay Market Analyzer
+# eBay ETL Pipeline
 
 ![Nintendo 3DS Dashboard](Nintendo_3DS_Sales_Report.png)
 
