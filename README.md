@@ -1,7 +1,7 @@
 # eBay ETL Pipeline
 
 ## Warning: This tool is no longer functional, as eBay now requires users to be signed in to view sold and completed listings.
-The alternative would be to have the browser launched in a non-headless mode and require the user to manually sign in with there own account each time the script is run.
+The alternative would be to have the browser launched in a non-headless mode and require the user to manually sign in with their own account each time the script is run.
 
 ![Nintendo 3DS Dashboard](Nintendo_3DS_Sales_Report.png)
 
