@@ -12,7 +12,6 @@ def create_url(search_term):
     Creates and returns a string containing a formatted URL targetting eBay's 'Sold & Completed' listings
     """
     base_url = "https://www.ebay.com/sch/i.html"
-
     params = {
         '_nkw': search_term,
         '_sacat': '0',
@@ -34,6 +33,7 @@ def scrape_items(search_term):
     """
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
+    
     driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options = options)
     url = create_url(search_term)
 
@@ -41,16 +41,17 @@ def scrape_items(search_term):
     
     #Waits for results to load
     WebDriverWait(driver, 10).until(
-        EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".su-card-container"))
+        EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".su-card-container__content"))
     )
 
-    scraped_items = driver.find_elements(By.CSS_SELECTOR, ".su-card-container")
+    scraped_items = driver.find_elements(By.CSS_SELECTOR, ".su-card-container__content")
     items = []
+    
     for item in scraped_items:
         item_data = {}
+        
         try:
             price_elem = item.find_element(By.CSS_SELECTOR, ".s-card__price")
-
             #Avoids hidden templates that match the selector but contain no data
             price_txt = price_elem.text.strip()
             if not price_txt:
@@ -61,6 +62,7 @@ def scrape_items(search_term):
             elems = item.find_elements(By.CSS_SELECTOR, ".large")
             for elem in elems:
                 txt = elem.text.lower()
+                
                 if "delivery" in txt:
                     item_data['shipping'] = txt
 
@@ -72,6 +74,7 @@ def scrape_items(search_term):
         items.append(item_data)
 
     driver.quit()
+    
     return items
 
 def clean_data(data):
@@ -108,15 +111,13 @@ def clean_data(data):
     clean_df = df[(df['Total Price'] >= l_bound) & (df['Total Price'] <= u_bound)]
 
     clean_df = clean_df.sort_values(by = 'Date Sold', ascending = False)
+    
     return clean_df
 
 if __name__ == "__main__":
     user_input = input("Enter item to search on eBay: ")
-
-    #ETL process execution
     raw_data = scrape_items(user_input)
     clean_df = clean_data(raw_data)
-
     count = len(clean_df)
     avg = clean_df['Total Price'].mean()
     min_price = clean_df['Total Price'].min()
